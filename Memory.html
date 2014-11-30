@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+/* Page Background */
+body {
+  background-color: #3D2E00;
+  background-image: linear-gradient(#3D2E00, #F5EBCC);
+}
+/* Boaord Border */
+div#memory_board{
+  background:#9933FF;
+  border:#FF0000 20px solid;
+  border-radius: 10px;
+  width:800px;
+  height:540px;
+  padding:24px;
+  margin:0px auto;
+}
+/* Tiles */
+div#memory_board > div{
+  background: url(http://img2.wikia.nocookie.net/__cb20130822100032/spongebob/images/c/cf/Patrick.png) no-repeat;
+  background-size: cover;
+  border:#FFCC00 1px solid;
+  border-radius: 10px;
+  width:71px;
+  height:71px;
+  float:left;
+  margin:10px;
+  padding:20px;
+  font-size:85px;
+  cursor:pointer;
+  text-align:center;
+}
+/* Start button */
+nav#nav1{ margin-top: 30px;}
+nav#nav1 > a{
+  background: #FF9999;
+  color: #000;
+  padding: 10px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-family: "Arial Black", Gadget, sans-serif;
+}
+nav#nav1 > a:hover{ background: #BBEA00;}
+nav#nav1 > a:active{ background: #EEFFA8;}
+</style>
+<script>
+var noise = new Audio();
+noise.src = "http://fsb.zedge.net/dl/ringtone/7d5a285cef34fd6fa5e643d1659a5b36/danger_man.mp3?ref=www&type=mc"
+// Tiles
+var memory_array = ['A','A','B','B','C','C','D','D','E','E','F','F','G','G','H','H','I','I','J','J','K','K','L','L'];
+var memory_values = [];
+var memory_tile_ids = [];
+var tiles_flipped = 0;
+Array.prototype.memory_tile_shuffle = function(){
+    var i = this.length, j, temp;
+    while(--i > 0){
+        j = Math.floor(Math.random() * (i+1));
+        temp = this[j];
+        this[j] = this[i];
+        this[i] = temp;
+    }
+}
+function newBoard(){
+  tiles_flipped = 0;
+  var output = '';
+    memory_array.memory_tile_shuffle();
+  for(var i = 0; i < memory_array.length; i++){
+    output += '<div id="tile_'+i+'" onclick="memoryFlipTile(this,\''+memory_array[i]+'\')"></div>';
+  }
+  document.getElementById('memory_board').innerHTML = output;
+}
+function memoryFlipTile(tile,val){
+  if(tile.innerHTML == "" && memory_values.length < 2){
+    // Tile background color
+    tile.style.background = '#66FF33';
+    tile.innerHTML = val;
+    // No tiles flipped
+    if(memory_values.length == 0){
+      memory_values.push(val);
+      memory_tile_ids.push(tile.id);
+      // 1 tile flipped
+    } else if(memory_values.length == 1){
+      memory_values.push(val);
+      memory_tile_ids.push(tile.id);
+      // 2 tiles flipped
+      if(memory_values[0] == memory_values[1]){
+        tiles_flipped += 2;
+        // User made a tile match. Clear both arrays
+        memory_values = [];
+              memory_tile_ids = [];
+        // Checks to see if all the tiles are flipped over
+        if(tiles_flipped == memory_array.length){
+          // New Game Alert
+          alert("New Game");
+          //Randomly shuffles tiles
+          document.getElementById('memory_board').innerHTML = "";
+          newBoard();
+        }
+        //If no match is made
+      } else {
+        function flip2Back(){
+            // Flip the 2 tiles back over
+            var tile_1 = document.getElementById(memory_tile_ids[0]);
+            var tile_2 = document.getElementById(memory_tile_ids[1]);
+            tile_1.style.background = 'url(http://img2.wikia.nocookie.net/__cb20130822100032/spongebob/images/c/cf/Patrick.png) no-repeat';
+                  tile_1.innerHTML = "";
+            tile_2.style.background = 'url(http://img2.wikia.nocookie.net/__cb20130822100032/spongebob/images/c/cf/Patrick.png) no-repeat';
+                  tile_2.innerHTML = "";
+            // Clear both arrays
+            memory_values = [];
+                  memory_tile_ids = [];
+        }
+        // Card flip back over speed 1 second
+        setTimeout(flip2Back, 1000);
+      }
+    }
+  }
+}
+</script>
+<title>Memory Game</title>
+</head>
+<body>
+<nav id ="nav1">
+  <a href="#" onmousedown="noise.play()">Start</a>
+</nav>
+<div id="memory_board"></div>
+
+<script>
+// Calls new board
+newBoard();
+</script>
+</form>
+</body>
+</html>
